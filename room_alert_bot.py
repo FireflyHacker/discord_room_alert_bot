@@ -14,6 +14,7 @@ import os
 import requests     # for webhook requests
 import json         # used for checking discord status page
 import logging      # gotta keep them logs
+import alert_codes
 
 # companion files
 import messenger
@@ -62,7 +63,7 @@ def main():
 
         # this will run until the "powering up" message is sent successfully
         while not message_success:
-            a,b = messenger.send_room_alert("poweron")
+            a,b = messenger.send_room_alert(AlertCode.POWERON)
             error_desc = b
             if a:
                 logging.info("sent initial message to discord, starting primary loop")
@@ -99,7 +100,7 @@ def main():
 
                 if not message_success:        # if message was already successfully sent, don't sent another
                     # if function returns false, sending was unsuccessful
-                    a,b = messenger.send_room_alert("open")
+                    a,b = messenger.send_room_alert(AlertCode.OPEN)
                     error_desc = b
                     if a:
                         logging.info("message sending success, turning LEDs to OCCUPIED state now")
@@ -123,7 +124,7 @@ def main():
 
                 if not message_success:        # if message was already successfully sent, don't sent another
                     # if function returns false, sending was unsuccessful
-                    a,b = messenger.send_room_alert("closed")
+                    a,b = messenger.send_room_alert(AlertCode.CLOSED)
                     error_desc = b
                     if a:
                         logging.info("message sending success, turning LEDs to VACANT state now")
@@ -170,7 +171,7 @@ def main():
         logging.info("Caught a big exception in the wild! Generic Exception: " + str(err))
 
     except KeyboardInterrupt as err:
-        messenger.send_room_alert("poweroff")
+        messenger.send_room_alert(AlertCode.POWEROFF)
         quit()
 
 

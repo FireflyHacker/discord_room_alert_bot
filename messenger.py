@@ -12,7 +12,8 @@ import smtplib, ssl # for sending email
 import os
 import time
 import logging
-
+import webhook_packets
+import alert_codes
 import _creds_
 
 port = 465  # For SMTP SSL
@@ -42,20 +43,10 @@ def main():
         print("sending email succeeded!")
 
 
-def send_room_alert(alert_code):
+def send_room_alert(json_data):
     # set alert_code = whatever json packet we're going to use 
-    if alert_code == "open":
-        json_data = open_data
-    elif alert_code == "closed":
-        json_data = closed_data
-    elif alert_code == "test":
-        json_data = test_message
-    elif alert_code == "poweron":
-        json_data = poweron_data
-    elif alert_code == "poweroff":
-        json_data = poweroff_data
-    else:
-        json_data = interp_error_data
+    if not isinstance(json_data, AlertCode):
+        json_data = AlertCode.INTERP_ERROR
     try:
         result = requests.post(_creds_.WEBHOOK_URL, json = json_data)
     except ConnectionError as err:
@@ -107,38 +98,6 @@ This message was sent by an automated system.""".format(fail_count, error_desc, 
     else:
         logging.info("Email sent successfully")
         return True
-
-
-# JSON data packets for the discord message webhooks
-open_data = {
-    "content" : "Looks like the IEEE Room is open! :sunglasses:",
-    "username" : "IEEE Room Alert"
-}
-
-closed_data = {
-    "content" : "Looks like the IEEE Room is no longer open :disappointed:",
-    "username" : "IEEE Room Alert"
-}
-
-poweron_data = {
-    "content" : "Powering on!",
-    "username" : "IEEE Room Alert"
-}
-
-poweroff_data = {
-    "content" : "Time for a graceful shutdown :(",
-    "username" : "IEEE Room Alert"
-}
-
-interp_error_data = {
-    "content" : "Looks like we ran into an error and I'm not sure what to send out :(",
-    "username" : "IEEE Room Alert"
-}
-
-test_message = {
-    "content" : "Results of testing the messaging functionality on discord: ",
-    "username" : "IEEE Room Alert"
-}
 
 if __name__=="__main__":
     main()
