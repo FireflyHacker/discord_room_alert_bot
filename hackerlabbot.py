@@ -45,22 +45,13 @@ async def closeLab(name="") -> bool:
     Changes the nickname to HackerLab CLOSED
     Changes the pfp of the bot to red
     """
-    # try:
-    #     with open("logo-red-v3.jpg", "rb") as image:
-    #         # Change the bot's avatar
-    #         await bot.user.edit(avatar=image.read())
-    # except Exception as e:
-    #     print("ERROR: ", str(e), file=sys.stderr)
-
     try:
         embed = discord.Embed(
             title="HackerLab Closed",
-            description="The HackerLab is Closed :(",
+            description="The HackerLab is Closed :(" if name == "" else "The HackerLab was closed by " + name,
             color=discord.Color.red(),
             timestamp=datetime.datetime.now(tz)
         )
-        if name != "":
-            embed.description = "The HackerLab was closed by " + name
         await messenger(embed, "HackerLab CLOSED", "🔴 Lab CLOSED")
         return True
     except Exception as e:
@@ -77,27 +68,17 @@ async def openLab(name="") -> bool:
         Changes the nickname to HackerLab OPEN
         Changes the pfp of the bot to green
         """
-    # try:
-    #     with open("logo-green-v3.jpg", "rb") as image:
-    #         # Change the bot's avatar
-    #         await bot.user.edit(avatar=image.read())
-    # except Exception as e:
-    #     print("ERROR: ", str(e), file=sys.stderr)
-
     try:
         embed = discord.Embed(
             title="HackerLab Open",
-            description="HackerLab is now Open",
+            description="HackerLab is now Open" if name == "" else "The HackerLab was opened by " + name,
             color=discord.Color.green(),
             timestamp=datetime.datetime.now(tz)
         )
-        if name != "":
-            embed.description = "The HackerLab was opened by " + name
         await messenger(embed, "HackerLab OPEN", "🟢 Lab OPEN")
     except Exception as e:
         print("ERROR: ", str(e), file=sys.stderr)
         return False
-
     return True
 
 
